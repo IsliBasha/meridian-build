@@ -1,281 +1,245 @@
 /**
- * Placeholder data for Meridian Build scaffold.
- * Replace with real content before launch.
- * SVG room coordinates are for viewBox="0 0 580 380" floor plan.
+ * Content for Eco Volt Electrical — remade from ecovoltelectric.com.
+ * `company`, `clients`, and copy voice are grounded in the real site's published content
+ * (About/Contact pages, fetched directly). Eco Volt does not hold its own electrical
+ * license — it operates in partnership with Licensed Master Electricians for permits,
+ * DOB filings, and final inspections. No years-in-business, license number, or client
+ * list is published on the real site, so none are fabricated here.
+ *
+ * `capabilityMap` zone grid coordinates are grid-column/grid-row spans on a
+ * 6-column x 4-row CSS Grid (matches BuildingExplorer.svelte's plan view).
  */
 
 export const company = {
-  name: 'Meridian Build',
-  tagline: 'Commercial Construction & Electrical',
+  name: 'Eco Volt Electrical',
+  tagline: 'Reliable Energy, Smart Solutions.',
   city: 'New York City',
-  established: 2009,
-  address: '245 Park Avenue, Suite 1700, New York, NY 10167',
-  phone: '+1 (212) 555-0194',
-  email: 'projects@meridianbuild.com',
-  license: 'NYC DOB License #EC-00419 · General Contractor #GC-7821',
-  stats: [
-    { value: '15+', label: 'Years Operating' },
-    { value: '140+', label: 'Projects Completed' },
-    { value: '35+', label: 'Specialists' },
-    { value: '$480M+', label: 'Project Value Delivered' }
-  ]
+  phone: '(929) 990-8248',
+  email: 'info@ecovoltelectric.com',
+  partnership:
+    'Eco Volt Electrical operates in partnership with Licensed Master Electricians for all permits, NYC Department of Buildings filings, and final inspections.'
 };
 
 export const team = [
   {
-    id: 'marco',
-    name: 'Marco Castellano',
-    title: 'Founder & CEO',
-    bio: 'Twenty years in New York commercial construction. Previously led large-scale fit-out programs at Turner Construction before founding Meridian in 2009.',
-    initials: 'MC'
+    id: 'estimator',
+    name: 'Estimator',
+    title: 'Project Scoping',
+    bio: 'Plans every job with honesty and accuracy, so there are no surprises once work begins.',
+    initials: 'ES'
   },
   {
-    id: 'sarah',
-    name: 'Sarah Chen',
-    title: 'Director of Projects',
-    bio: 'Columbia SEAS graduate. Manages concurrent multi-site programs across Manhattan and the outer boroughs. Specialist in phased occupancy coordination.',
-    initials: 'SC'
+    id: 'assistant',
+    name: 'Assistant',
+    title: 'Scheduling & Communication',
+    bio: 'Keeps clients informed from first call to final walkthrough.',
+    initials: 'AS'
   },
   {
-    id: 'daniel',
-    name: 'Daniel Torres',
-    title: 'Lead Electrical Engineer',
-    bio: 'Licensed Master Electrician, NYC. Fourteen years designing and commissioning high-density power systems for commercial and mixed-use developments.',
-    initials: 'DT'
-  },
-  {
-    id: 'angela',
-    name: 'Angela Russo',
-    title: 'Operations Director',
-    bio: 'Oversees procurement, subcontractor relationships, and compliance across all active projects. Former project controls lead at Skanska USA.',
-    initials: 'AR'
+    id: 'field-crew',
+    name: 'Field Crew',
+    title: 'Installation',
+    bio: 'Hands-on experts who take pride in their craft, on-site for every job.',
+    initials: 'FC'
   }
 ];
 
+/** Who Eco Volt serves — sector categories, not named clients (none are published). */
 export const clients = [
-  { name: 'Related Companies', sector: 'Real Estate Development' },
-  { name: 'Turner Construction', sector: 'General Contracting' },
-  { name: 'Skanska USA', sector: 'Infrastructure' },
-  { name: 'Forest City Realty', sector: 'Mixed-Use Development' },
-  { name: 'Brookfield Properties', sector: 'Commercial Real Estate' },
-  { name: 'L&L Holding Company', sector: 'Class A Office' }
+  { name: 'Homeowners', sector: 'Residential Properties' },
+  { name: 'Property Managers', sector: 'Multi-Unit & Rental Buildings' },
+  { name: 'Small Business Owners', sector: 'Retail & Commercial Space' },
+  { name: 'General Contractors', sector: 'Trade Partnerships' }
 ];
 
 export const services = [
   {
-    id: 'electrical',
+    id: 'residential',
     number: '01',
-    name: 'Electrical Installations',
-    summary: 'High-density power distribution, emergency systems, and building-wide electrical infrastructure for commercial and mixed-use developments.',
+    name: 'Residential Electrical',
+    summary: 'Panel upgrades, rewiring, and lighting for homes and multi-unit residential buildings across New York City.',
     points: [
-      'Primary & secondary power distribution',
-      'Emergency power and UPS systems',
-      'Building automation integration',
-      'NYC DOB permit management',
-      'Commissioning and load testing'
+      'Panel & sub-panel upgrades',
+      'Full and partial rewiring',
+      'Lighting circuits & fixture installation',
+      'GFCI & safety code upgrades',
+      'Ceiling fan & appliance circuits'
     ]
   },
   {
-    id: 'construction',
+    id: 'commercial',
     number: '02',
-    name: 'Commercial Construction',
-    summary: 'Ground-up and core-and-shell construction for office, retail, and mixed-use projects across New York City.',
+    name: 'Commercial Installations',
+    summary: 'Electrical work for offices, retail spaces, and small-to-large commercial buildouts.',
     points: [
-      'Ground-up commercial construction',
-      'Core & shell development',
-      'Structural build-out',
-      'Phased occupancy programs',
-      'Post-construction commissioning'
+      'Office & retail power distribution',
+      'Lighting design & control systems',
+      'Signage & storefront circuits',
+      'Server & equipment room wiring',
+      'Tenant fit-out electrical'
     ]
   },
   {
-    id: 'fitout',
+    id: 'efficiency',
     number: '03',
-    name: 'Fit-Out & Renovation',
-    summary: 'Tenant improvement and complete interior renovation programs. Minimal disruption to occupied floors.',
+    name: 'Energy Efficiency Upgrades',
+    summary: 'Smart, efficient electrical systems that lower operating costs over time.',
     points: [
-      'Class A office fit-out',
-      'Retail and hospitality renovation',
-      'Occupied-floor phasing',
-      'MEP coordination',
-      'Expedited permit processing'
+      'LED retrofits',
+      'Smart panel & switch installation',
+      'EV charger-ready circuits',
+      'Energy usage audits'
     ]
   },
   {
-    id: 'pm',
+    id: 'compliance',
     number: '04',
-    name: 'Project Management',
-    summary: "Owner's representative and construction management services for clients who need independent oversight on complex programs.",
+    name: 'Code Compliance & Permitting',
+    summary: "Every job filed and inspected in partnership with a Licensed Master Electrician, fully compliant with NYC DOB regulations.",
     points: [
-      'Owner\'s representative services',
-      'Contractor procurement & vetting',
-      'Schedule and budget control',
-      'Regulatory compliance tracking',
-      'Stakeholder reporting'
-    ]
-  }
-];
-
-export const careers = [
-  {
-    id: 'foreman',
-    title: 'Site Foreman',
-    type: 'Full-time',
-    location: 'New York, NY',
-    department: 'Construction',
-    description: 'Lead day-to-day site operations on a 40,000+ sq ft commercial fit-out in Midtown Manhattan. Coordinate subcontractors, enforce safety protocols, and report to the project manager.',
-    requirements: [
-      '5+ years commercial construction experience',
-      'OSHA 30 certification',
-      'Ability to read and interpret architectural drawings',
-      'Experience managing subcontractor crews'
-    ]
-  },
-  {
-    id: 'electrician',
-    title: 'Junior Electrician',
-    type: 'Full-time',
-    location: 'New York, NY',
-    department: 'Electrical',
-    description: 'Support licensed electricians on commercial installation projects across Manhattan. This is a hands-on apprenticeship-track role with direct mentorship from our lead team.',
-    requirements: [
-      'Electrician apprenticeship or trade school graduate',
-      'NYC electrical worker license (or in progress)',
-      'Familiarity with commercial wiring systems',
-      'Physical ability to work on active construction sites'
+      'NYC DOB permit filing',
+      'Final inspection coordination',
+      'Violation remediation',
+      'Code compliance review'
     ]
   }
 ];
 
 /**
- * Building explorer projects.
- * Room SVG coordinates map to viewBox="0 0 580 380".
- * Floor outline: x=20, y=20, w=540, h=340.
+ * Capability map for the homepage explorer: not a project history (Eco Volt hasn't
+ * published one) but a blueprint-style showcase of the electrical work Eco Volt can
+ * perform in each type of space, across residential, commercial, and retail properties.
  */
-export const explorerProjects = [
+export const capabilityMap = [
   {
-    id: 'madison-avenue',
-    name: '340 Madison Avenue',
-    type: 'Commercial Office Fit-Out',
-    location: 'Midtown Manhattan, NY',
-    year: 2023,
-    area: '42,000 sq ft',
-    scope: 'Full electrical installation, Class A fit-out, 4 floors',
+    id: 'residential',
+    name: 'RESIDENTIAL BUILDING',
+    description: 'From single units to full multi-family buildings — every space wired to code and built to last.',
     floors: [
       {
-        number: 4,
-        label: 'Executive Level',
-        rooms: [
-          {
-            id: 'R401', name: 'Open Plan Office', type: 'Office',
-            area: 1080, floor: 4, orientation: 'South-West',
-            svgX: 20, svgY: 20, svgW: 300, svgH: 200
-          },
-          {
-            id: 'R402', name: 'Executive Suite', type: 'Private Office',
-            area: 420, floor: 4, orientation: 'North-East',
-            svgX: 320, svgY: 20, svgW: 240, svgH: 120
-          },
-          {
-            id: 'R403', name: 'Board Room', type: 'Conference',
-            area: 280, floor: 4, orientation: 'East',
-            svgX: 320, svgY: 140, svgW: 240, svgH: 80
-          },
-          {
-            id: 'R404', name: 'Reception', type: 'Common Area',
-            area: 240, floor: 4, orientation: 'North',
-            svgX: 20, svgY: 220, svgW: 200, svgH: 140
-          },
-          {
-            id: 'R405', name: 'Services Corridor', type: 'Service',
-            area: 180, floor: 4, orientation: 'South',
-            svgX: 220, svgY: 220, svgW: 340, svgH: 140
-          }
-        ]
-      },
-      {
-        number: 3,
-        label: 'Operations Floor',
-        rooms: [
-          {
-            id: 'R301', name: 'Operations Hub', type: 'Open Plan',
-            area: 1200, floor: 3, orientation: 'South-West',
-            svgX: 20, svgY: 20, svgW: 360, svgH: 200
-          },
-          {
-            id: 'R302', name: 'Meeting Suite A', type: 'Conference',
-            area: 280, floor: 3, orientation: 'North',
-            svgX: 380, svgY: 20, svgW: 180, svgH: 200
-          },
-          {
-            id: 'R303', name: 'IT Infrastructure', type: 'Technical',
-            area: 140, floor: 3, orientation: 'East',
-            svgX: 20, svgY: 220, svgW: 200, svgH: 140
-          },
-          {
-            id: 'R304', name: 'Break Room', type: 'Common Area',
-            area: 160, floor: 3, orientation: 'South',
-            svgX: 220, svgY: 220, svgW: 160, svgH: 140
-          },
-          {
-            id: 'R305', name: 'Storage', type: 'Service',
-            area: 100, floor: 3, orientation: 'South-East',
-            svgX: 380, svgY: 220, svgW: 180, svgH: 140
-          }
+        number: 1,
+        label: 'BASEMENT / MECHANICAL',
+        zones: [
+          { short: 'ELEC RM', name: 'Electrical Room', gc: '1 / 4', gr: '1 / 3', area: '180 SQ FT', services: ['Main panel & meter bank service', 'Sub-panel installation for common areas', 'Emergency lighting circuits'], desc: 'The building\'s main electrical distribution point — where every unit\'s power originates.' },
+          { short: 'LAUNDRY', name: 'Laundry Room', gc: '4 / 7', gr: '1 / 3', area: '140 SQ FT', services: ['Dedicated appliance circuits', 'GFCI outlet installation', 'Exhaust fan & lighting wiring'], desc: 'Heavy-load appliances need dedicated, code-compliant circuits of their own.' },
+          { short: 'BOILER', name: 'Boiler / Mechanical Room', gc: '1 / 4', gr: '3 / 5', area: '160 SQ FT', services: ['Equipment power hookups', 'Control wiring for HVAC systems'], desc: 'Mechanical equipment power and low-voltage control wiring.' },
+          { short: 'STORAGE', name: 'Storage', gc: '4 / 7', gr: '3 / 5', area: '120 SQ FT', services: ['General lighting circuits'], desc: 'Simple, reliable lighting for storage and utility space.' }
         ]
       },
       {
         number: 2,
-        label: 'Client Services',
-        rooms: [
-          {
-            id: 'R201', name: 'Client Reception', type: 'Common Area',
-            area: 320, floor: 2, orientation: 'North',
-            svgX: 20, svgY: 20, svgW: 540, svgH: 100
-          },
-          {
-            id: 'R202', name: 'Presentation Suite', type: 'Conference',
-            area: 480, floor: 2, orientation: 'West',
-            svgX: 20, svgY: 120, svgW: 260, svgH: 240
-          },
-          {
-            id: 'R203', name: 'Consultant Office', type: 'Private Office',
-            area: 200, floor: 2, orientation: 'East',
-            svgX: 280, svgY: 120, svgW: 280, svgH: 120
-          },
-          {
-            id: 'R204', name: 'Storage & Utilities', type: 'Service',
-            area: 120, floor: 2, orientation: 'South-East',
-            svgX: 280, svgY: 240, svgW: 280, svgH: 120
-          }
+        label: 'GROUND FLOOR / LOBBY',
+        zones: [
+          { short: 'LOBBY', name: 'Lobby', gc: '1 / 5', gr: '1 / 3', area: '320 SQ FT', services: ['Accent & general lighting design', 'Intercom & buzzer wiring', 'Emergency egress lighting'], desc: 'First impression lighting, paired with the building\'s access systems.' },
+          { short: 'MAIL', name: 'Mailroom', gc: '5 / 7', gr: '1 / 3', area: '90 SQ FT', services: ['Outlet installation', 'Lighting circuits'], desc: 'Standard circuits for a small, high-traffic space.' },
+          { short: 'SUPER', name: "Superintendent's Office", gc: '1 / 4', gr: '3 / 5', area: '110 SQ FT', services: ['Outlet & lighting circuits'], desc: 'On-site office wired for day-to-day building operations.' },
+          { short: 'ENTRY', name: 'Entrance & Egress', gc: '4 / 7', gr: '3 / 5', area: '150 SQ FT', services: ['Exterior lighting', 'Code-required egress lighting'], desc: 'Entry and exit points wired to NYC fire and safety code.' }
         ]
       },
       {
+        number: 3,
+        label: 'TYPICAL UPPER FLOOR',
+        zones: [
+          { short: 'KITCHEN', name: 'Kitchen', gc: '1 / 4', gr: '1 / 3', area: '150 SQ FT', services: ['Panel & circuit upgrades', 'GFCI outlet installation', 'Under-cabinet & task lighting', 'Appliance circuit wiring'], desc: 'The most-rewired room in any home — modern kitchens need modern circuits.' },
+          { short: 'LIVING', name: 'Living Area', gc: '4 / 7', gr: '1 / 3', area: '280 SQ FT', services: ['General lighting circuits', 'Outlet additions', 'Smart switch & dimmer installation'], desc: 'Everyday living space, upgraded with smart lighting controls.' },
+          { short: 'BEDROOM', name: 'Bedroom', gc: '1 / 3', gr: '3 / 5', area: '160 SQ FT', services: ['Outlet & lighting circuits', 'Ceiling fan wiring'], desc: 'Standard residential circuits, done right.' },
+          { short: 'BATH', name: 'Bathroom', gc: '3 / 5', gr: '3 / 5', area: '70 SQ FT', services: ['GFCI outlet installation', 'Exhaust fan wiring', 'Vanity lighting'], desc: 'Wet-location wiring to code, every time.' },
+          { short: 'HALL', name: 'Hallway', gc: '5 / 7', gr: '3 / 5', area: '90 SQ FT', services: ['Common-area lighting', 'Smoke & CO detector wiring'], desc: 'Circulation space wired for safety compliance.' }
+        ]
+      },
+      {
+        number: 4,
+        label: 'ROOF',
+        zones: [
+          { short: 'RTU', name: 'Rooftop Equipment', gc: '1 / 4', gr: '1 / 4', area: '200 SQ FT', services: ['Equipment power hookups', 'Weatherproof outlet installation'], desc: 'Rooftop HVAC and equipment, wired for outdoor conditions.' },
+          { short: 'ACCESS', name: 'Roof Access', gc: '4 / 7', gr: '1 / 4', area: '80 SQ FT', services: ['Egress & safety lighting'], desc: 'Access points lit and wired for code compliance.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'commercial',
+    name: 'COMMERCIAL OFFICE',
+    description: 'Office buildouts and tenant fit-outs, from a single floor to a full building.',
+    floors: [
+      {
         number: 1,
-        label: 'Ground Floor',
-        rooms: [
-          {
-            id: 'R101', name: 'Lobby', type: 'Common Area',
-            area: 520, floor: 1, orientation: 'North',
-            svgX: 20, svgY: 20, svgW: 540, svgH: 120
-          },
-          {
-            id: 'R102', name: 'Security Station', type: 'Service',
-            area: 60, floor: 1, orientation: 'East',
-            svgX: 20, svgY: 140, svgW: 120, svgH: 220
-          },
-          {
-            id: 'R103', name: 'Mail & Services', type: 'Service',
-            area: 80, floor: 1, orientation: 'West',
-            svgX: 140, svgY: 140, svgW: 140, svgH: 220
-          },
-          {
-            id: 'R104', name: 'Tenant Lounge', type: 'Common Area',
-            area: 480, floor: 1, orientation: 'South',
-            svgX: 280, svgY: 140, svgW: 280, svgH: 220
-          }
+        label: 'GROUND FLOOR / LOBBY',
+        zones: [
+          { short: 'LOBBY', name: 'Reception & Lobby', gc: '1 / 5', gr: '1 / 3', area: '400 SQ FT', services: ['Architectural lighting design', 'Access control wiring', 'Signage circuits'], desc: 'The first space a client sees — lit to make an impression.' },
+          { short: 'SECURITY', name: 'Security Desk', gc: '5 / 7', gr: '1 / 3', area: '80 SQ FT', services: ['Dedicated outlet circuits', 'Camera & access system power'], desc: 'Power for security systems and monitoring equipment.' },
+          { short: 'ELEV', name: 'Elevator Lobby', gc: '1 / 4', gr: '3 / 5', area: '150 SQ FT', services: ['General & emergency lighting'], desc: 'Circulation space wired to code.' },
+          { short: 'ENTRY', name: 'Building Entrance', gc: '4 / 7', gr: '3 / 5', area: '120 SQ FT', services: ['Exterior lighting', 'Egress lighting'], desc: 'Entrances wired for safety and visibility.' }
+        ]
+      },
+      {
+        number: 2,
+        label: 'TYPICAL OFFICE FLOOR',
+        zones: [
+          { short: 'OPEN', name: 'Open Office', gc: '1 / 4', gr: '1 / 3', area: '900 SQ FT', services: ['Workstation power circuits', 'Overhead & task lighting', 'Lighting control systems'], desc: 'Flexible power layouts for open-plan workspaces.' },
+          { short: 'CONF', name: 'Conference Room', gc: '4 / 7', gr: '1 / 3', area: '260 SQ FT', services: ['AV & presentation power', 'Dimmable lighting circuits'], desc: 'Meeting spaces wired for presentation equipment.' },
+          { short: 'IT', name: 'IT / Server Closet', gc: '1 / 3', gr: '3 / 5', area: '90 SQ FT', services: ['Dedicated server rack circuits', 'Backup power hookups'], desc: 'Isolated, clean power for sensitive equipment.' },
+          { short: 'PRIVATE', name: 'Private Offices', gc: '3 / 5', gr: '3 / 5', area: '220 SQ FT', services: ['Outlet & lighting circuits', 'Smart switch installation'], desc: 'Individual offices wired for modern work.' },
+          { short: 'BREAK', name: 'Break Room', gc: '5 / 7', gr: '3 / 5', area: '150 SQ FT', services: ['Dedicated appliance circuits', 'GFCI outlet installation'], desc: 'Kitchenette-grade circuits for shared appliances.' }
+        ]
+      },
+      {
+        number: 3,
+        label: 'MECHANICAL / CORE',
+        zones: [
+          { short: 'ELEC RM', name: 'Electrical Room', gc: '1 / 4', gr: '1 / 3', area: '220 SQ FT', services: ['Main distribution & sub-metering', 'Tenant panel installation'], desc: 'Building-wide power distribution and tenant metering.' },
+          { short: 'MECH', name: 'Mechanical Room', gc: '4 / 7', gr: '1 / 3', area: '260 SQ FT', services: ['HVAC equipment power', 'Control wiring'], desc: 'Power and controls for building mechanical systems.' },
+          { short: 'ELEV MR', name: 'Elevator Machine Room', gc: '1 / 7', gr: '3 / 5', area: '180 SQ FT', services: ['Equipment power hookups', 'Emergency circuit wiring'], desc: 'Dedicated, code-required circuits for elevator systems.' }
+        ]
+      },
+      {
+        number: 4,
+        label: 'ROOF',
+        zones: [
+          { short: 'RTU', name: 'Rooftop HVAC', gc: '1 / 4', gr: '1 / 4', area: '240 SQ FT', services: ['Equipment power hookups', 'Weatherproof wiring'], desc: 'Outdoor-rated circuits for rooftop mechanical units.' },
+          { short: 'ACCESS', name: 'Roof Access', gc: '4 / 7', gr: '1 / 4', area: '80 SQ FT', services: ['Egress & safety lighting'], desc: 'Code-compliant access lighting.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'retail',
+    name: 'RETAIL STOREFRONT',
+    description: 'Storefront and small-business electrical, built to draw customers in and keep operations running.',
+    floors: [
+      {
+        number: 1,
+        label: 'BASEMENT / STOCKROOM',
+        zones: [
+          { short: 'STOCK', name: 'Stockroom', gc: '1 / 5', gr: '1 / 3', area: '400 SQ FT', services: ['General lighting circuits', 'Outlet installation'], desc: 'Reliable lighting and power for inventory storage.' },
+          { short: 'ELEC RM', name: 'Electrical Room', gc: '5 / 7', gr: '1 / 3', area: '100 SQ FT', services: ['Panel & sub-panel installation'], desc: 'The storefront\'s main electrical distribution point.' }
+        ]
+      },
+      {
+        number: 2,
+        label: 'GROUND FLOOR / SALES',
+        zones: [
+          { short: 'FRONT', name: 'Storefront & Signage', gc: '1 / 4', gr: '1 / 3', area: '120 SQ FT', services: ['Illuminated signage circuits', 'Window display lighting'], desc: 'The circuits that make a storefront visible from the street.' },
+          { short: 'SALES', name: 'Sales Floor', gc: '4 / 7', gr: '1 / 4', area: '600 SQ FT', services: ['Track & display lighting', 'Outlet additions for fixtures'], desc: 'Lighting layouts designed to show merchandise at its best.' },
+          { short: 'POS', name: 'POS / Register Area', gc: '1 / 4', gr: '3 / 5', area: '80 SQ FT', services: ['Dedicated POS circuits', 'Security system wiring'], desc: 'Clean, isolated power for point-of-sale systems.' }
+        ]
+      },
+      {
+        number: 3,
+        label: 'MEZZANINE / BACK OFFICE',
+        zones: [
+          { short: 'OFFICE', name: 'Back Office', gc: '1 / 4', gr: '1 / 3', area: '150 SQ FT', services: ['Outlet & lighting circuits'], desc: 'Standard circuits for day-to-day business operations.' },
+          { short: 'BREAK', name: 'Break Room', gc: '4 / 7', gr: '1 / 3', area: '100 SQ FT', services: ['Dedicated appliance circuits', 'GFCI outlet installation'], desc: 'Small-scale kitchenette wiring for staff.' }
         ]
       }
     ]
   }
 ];
+
+/**
+ * No open roles are currently posted — the careers page renders an honest empty state.
+ * @type {Array<{id: string, title: string, type: string, location: string, department: string, description: string, requirements: string[]}>}
+ */
+export const careers = [];
+
+export const careersNote = "No open positions right now. We're a small crew and only hire when the work calls for it — check back, or send a speculative application below.";

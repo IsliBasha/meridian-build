@@ -5,17 +5,16 @@
 <footer class="footer">
   <div class="container footer__inner">
     <div class="footer__brand">
-      <span class="footer__name">MERIDIAN BUILD</span>
-      <p class="footer__address">{company.address}</p>
-      <p class="footer__license">{company.license}</p>
+      <span class="footer__name">ECO VOLT ELECTRICAL</span>
+      <p class="footer__city">{company.city}</p>
+      <p class="footer__disclaimer">{company.partnership}</p>
     </div>
 
     <nav class="footer__nav" aria-label="Footer navigation">
       <ul role="list">
-        <li><a href="/projects">Projects</a></li>
-        <li><a href="/services">Services</a></li>
         <li><a href="/about">About</a></li>
-        <li><a href="/careers">Careers</a></li>
+        <li><a href="/clients">Clients</a></li>
+        <li><a href="/projects">Projects</a></li>
         <li><a href="/contact">Contact</a></li>
       </ul>
     </nav>
@@ -28,7 +27,7 @@
 
   <div class="footer__bottom">
     <div class="container footer__bottom-inner">
-      <span>&copy; {new Date().getFullYear()} Meridian Build LLC. All rights reserved.</span>
+      <span>&copy; {new Date().getFullYear()} Eco Volt Electrical. All rights reserved.</span>
       <span>New York City</span>
     </div>
   </div>
@@ -39,6 +38,7 @@
     background: var(--color-dark);
     color: var(--color-surface-2);
     padding-top: var(--sp-20);
+    border-top: 2px solid var(--color-ink);
   }
 
   .footer__inner {
@@ -46,24 +46,31 @@
     grid-template-columns: 2fr 1fr 1fr;
     gap: var(--sp-12);
     padding-bottom: var(--sp-16);
-    border-bottom: 1px solid oklch(30% 0.006 80);
+    border-bottom: 1.5px solid oklch(30% 0.006 80);
   }
 
   .footer__name {
     display: block;
     font-size: var(--text-xs);
-    font-weight: 600;
+    font-weight: 700;
     letter-spacing: 0.14em;
     color: var(--color-surface);
     margin-bottom: var(--sp-4);
   }
 
-  .footer__address,
-  .footer__license {
+  .footer__city {
     font-size: var(--text-sm);
     color: oklch(55% 0.006 80);
     line-height: 1.6;
     margin-top: var(--sp-2);
+  }
+
+  .footer__disclaimer {
+    font-size: var(--text-xs);
+    color: oklch(45% 0.006 80);
+    line-height: 1.6;
+    margin-top: var(--sp-4);
+    max-width: 40ch;
   }
 
   .footer__nav ul {

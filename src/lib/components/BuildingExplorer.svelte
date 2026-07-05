@@ -1,555 +1,473 @@
 <script>
-  import { fade } from 'svelte/transition';
+  /**
+   * Capability map explorer: not a project-history viewer (Eco Volt hasn't published
+   * one), but a blueprint-style showcase of the electrical work performed in each
+   * type of space. Tabs switch property type -> elevation (pick a floor) -> plan
+   * (hover a zone to preview, click to pin the full capability sheet).
+   */
+  /** @type {typeof import('$lib/data/placeholder.js').capabilityMap} */
+  export let properties = [];
 
-  /** @type {import('$lib/data/placeholder.js').explorerProjects[number]} */
-  export let project;
+  let activeProperty = 0;
+  /** @type {'elevation' | 'plan'} */
+  let viewMode = 'elevation';
+  /** @type {number | null} */
+  let floor = null;
+  /** @type {number | null} */
+  let hoverFloor = null;
+  /** @type {number | null} */
+  let hoverZone = null;
+  /** @type {number | null} */
+  let selectedZone = null;
 
-  /** @type {'building' | 'floor' | 'room'} */
-  let level = 'building';
-  let selectedFloor = null;
-  let selectedRoom = null;
-  let hoveredFloor = null;
-  let hoveredRoom = null;
+  $: property = properties[activeProperty];
+  $: currentFloor = property?.floors.find((f) => f.number === floor) ?? null;
+  $: activeZoneIndex = selectedZone ?? hoverZone;
+  $: activeZone = activeZoneIndex != null ? currentFloor?.zones[activeZoneIndex] : null;
 
-  const FLOOR_HEIGHT = 110;
-  const BUILDING_Y_START = 30;
-  const FLOORS_COUNT = 4;
-
-  /** @param {number} floorNumber */
-  function floorY(floorNumber) {
-    return BUILDING_Y_START + (FLOORS_COUNT - floorNumber) * FLOOR_HEIGHT;
+  /** @param {number} i */
+  function selectProperty(i) {
+    activeProperty = i;
+    resetView();
   }
 
-  /** @param {typeof project.floors[number]} floor */
-  function selectFloor(floor) {
-    selectedFloor = floor;
-    selectedRoom = null;
-    hoveredFloor = null;
-    level = 'floor';
+  function resetView() {
+    viewMode = 'elevation';
+    floor = null;
+    hoverFloor = null;
+    hoverZone = null;
+    selectedZone = null;
   }
 
-  /** @param {typeof project.floors[number]['rooms'][number]} room */
-  function selectRoom(room) {
-    selectedRoom = room;
-    hoveredRoom = null;
-    level = 'room';
+  /** @param {number} n */
+  function openFloor(n) {
+    viewMode = 'plan';
+    floor = n;
+    hoverZone = null;
+    selectedZone = null;
   }
 
-  function backToBuilding() {
-    level = 'building';
-    selectedFloor = null;
-    selectedRoom = null;
+  function backToElevation() {
+    viewMode = 'elevation';
+    floor = null;
+    hoverZone = null;
+    selectedZone = null;
   }
 
-  function backToFloor() {
-    level = 'floor';
-    selectedRoom = null;
+  function backToSummary() {
+    selectedZone = null;
   }
 
-  /** @param {KeyboardEvent} e @param {Function} action */
+  /** @param {KeyboardEvent} e @param {() => void} action */
   function onKey(e, action) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); action(); }
   }
-
-  const windows = Array.from({ length: 4 }, (_, col) =>
-    Array.from({ length: 3 }, (_, row) => ({ col, row }))
-  ).flat();
 </script>
 
-<div class="explorer" aria-label="Interactive project explorer">
+<div class="explorer" aria-label="Electrical capability explorer">
 
-  <!-- Demo badge -->
-  <div class="explorer__header">
-    <span class="demo-badge">DEMO PROJECT</span>
-    <span class="project-meta">{project.name} · {project.type} · {project.year}</span>
+  <!-- Property type tabs -->
+  <div class="tabs" role="tablist" aria-label="Property type">
+    {#each properties as p, i}
+      <button
+        type="button"
+        role="tab"
+        aria-selected={activeProperty === i}
+        class="tab"
+        class:tab--active={activeProperty === i}
+        on:click={() => selectProperty(i)}
+      >
+        {p.name}
+      </button>
+    {/each}
   </div>
 
-  <!-- Breadcrumb -->
-  <nav class="breadcrumb" aria-label="Explorer navigation">
-    <button
-      class="crumb"
-      class:crumb--active={level === 'building'}
-      on:click={backToBuilding}
-      disabled={level === 'building'}
-    >
-      {project.name}
-    </button>
-    {#if selectedFloor}
-      <span class="crumb-sep" aria-hidden="true">→</span>
-      <button
-        class="crumb"
-        class:crumb--active={level === 'floor'}
-        on:click={backToFloor}
-        disabled={level === 'floor'}
-      >
-        Floor {selectedFloor.number}
-      </button>
-    {/if}
-    {#if selectedRoom}
-      <span class="crumb-sep" aria-hidden="true">→</span>
-      <span class="crumb crumb--current">{selectedRoom.name}</span>
-    {/if}
-  </nav>
-
-  <!-- ── Level 1: Building view ── -->
-  {#if level === 'building'}
-    <div class="view view--building" transition:fade={{ duration: 280 }}>
-      <div class="building-hint">
-        <span class="label">Select a floor to explore</span>
-      </div>
-
-      <div class="building-layout">
-        <!-- Building SVG -->
-        <svg
-          viewBox="0 0 300 510"
-          class="building-svg"
-          role="group"
-          aria-label="Building floor selector. {project.floors.length} floors available."
-        >
-          <!-- Building body -->
-          <rect x="50" y="30" width="200" height="440" fill="var(--color-surface-2)" stroke="var(--color-line)" stroke-width="1.5"/>
-
-          <!-- Roof cap -->
-          <rect x="70" y="10" width="160" height="22" fill="var(--color-surface-2)" stroke="var(--color-line)" stroke-width="1"/>
-          <line x1="150" y1="0" x2="150" y2="10" stroke="var(--color-line)" stroke-width="1"/>
-
-          <!-- Clickable floor zones -->
-          {#each project.floors as floor}
-            {@const fy = floorY(floor.number)}
-            <!-- svelte-ignore a11y-interactive-supports-focus -->
-            <g
-              class="floor-zone"
-              role="button"
-              tabindex="0"
-              aria-label="Floor {floor.number}: {floor.label}. {floor.rooms.length} rooms."
-              on:click={() => selectFloor(floor)}
-              on:keydown={(e) => onKey(e, () => selectFloor(floor))}
-              on:mouseenter={() => hoveredFloor = floor.number}
-              on:mouseleave={() => hoveredFloor = null}
-            >
-              <!-- Floor hover fill -->
-              <rect
-                x="51" y={fy + 1} width="198" height={FLOOR_HEIGHT - 1}
-                fill={hoveredFloor === floor.number ? 'var(--color-accent-light)' : 'transparent'}
-                style="transition: fill 150ms ease-out;"
-              />
-
-              <!-- Floor divider -->
-              <line x1="50" y1={fy} x2="250" y2={fy} stroke="var(--color-line)" stroke-width="1"/>
-
-              <!-- Windows -->
-              {#each windows as w}
-                <rect
-                  x={78 + w.col * 38}
-                  y={fy + 22 + w.row * 28}
-                  width="20" height="14"
-                  rx="1"
-                  fill={hoveredFloor === floor.number ? 'var(--color-accent)' : 'var(--color-line)'}
-                  opacity={hoveredFloor === floor.number ? 0.25 : 0.55}
-                  style="transition: fill 150ms ease-out, opacity 150ms ease-out;"
-                />
-              {/each}
-
-              <!-- Floor label (left of building) -->
-              <text
-                x="42" y={fy + FLOOR_HEIGHT / 2 + 5}
-                text-anchor="end"
-                class="floor-label"
-                fill={hoveredFloor === floor.number ? 'var(--color-accent)' : 'var(--color-secondary)'}
-                style="transition: fill 150ms ease-out;"
-              >F{floor.number}</text>
-            </g>
-          {/each}
-
-          <!-- Bottom line -->
-          <line x1="50" y1="470" x2="250" y2="470" stroke="var(--color-line)" stroke-width="1.5"/>
-
-          <!-- Ground shadow -->
-          <rect x="40" y="470" width="220" height="8" fill="var(--color-line)" opacity="0.4"/>
-        </svg>
-
-        <!-- Project meta sidebar -->
-        <aside class="building-meta">
-          <dl class="meta-list">
-            <div class="meta-item">
-              <dt>Location</dt>
-              <dd>{project.location}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Type</dt>
-              <dd>{project.type}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Area</dt>
-              <dd>{project.area}</dd>
-            </div>
-            <div class="meta-item">
-              <dt>Completed</dt>
-              <dd>{project.year}</dd>
-            </div>
-            <div class="meta-item meta-item--full">
-              <dt>Scope</dt>
-              <dd>{project.scope}</dd>
-            </div>
-          </dl>
-        </aside>
-      </div>
-    </div>
-  {/if}
-
-  <!-- ── Level 2 + 3: Floor & Room views ── -->
-  {#if (level === 'floor' || level === 'room') && selectedFloor}
-    <div class="view view--floor" transition:fade={{ duration: 280 }}>
-      <div class="floor-layout">
-
-        <!-- Floor plan SVG -->
-        <div class="floor-plan-wrap">
-          <p class="floor-label-text label">
-            Floor {selectedFloor.number} — {selectedFloor.label}
-          </p>
-          <svg
-            viewBox="0 0 580 380"
-            class="floor-svg"
-            role="group"
-            aria-label="Floor {selectedFloor.number} plan. {selectedFloor.rooms.length} rooms."
-          >
-            <!-- Outer wall -->
-            <rect x="20" y="20" width="540" height="340"
-              fill="var(--color-surface-2)"
-              stroke="var(--color-text)"
-              stroke-width="2"/>
-
-            <!-- Rooms -->
-            {#each selectedFloor.rooms as room}
-              {@const isSelected = selectedRoom?.id === room.id}
-              {@const isHovered = hoveredRoom === room.id}
-              <!-- svelte-ignore a11y-interactive-supports-focus -->
-              <g
-                class="room-zone"
-                role="button"
-                tabindex="0"
-                aria-label="{room.name}, {room.type}, {room.area} sq ft, {room.orientation} facing"
-                aria-pressed={isSelected}
-                on:click={() => selectRoom(room)}
-                on:keydown={(e) => onKey(e, () => selectRoom(room))}
-                on:mouseenter={() => hoveredRoom = room.id}
-                on:mouseleave={() => hoveredRoom = null}
+  <div class="explorer__frame">
+    {#if viewMode === 'elevation'}
+      <!-- ── ELEVATION: pick a floor ── -->
+      <div class="elevation">
+        <div class="elevation__info">
+          <span class="ascii-frame">ELEVATION — SELECT A FLOOR</span>
+          <p class="elevation__blurb">{property.description}</p>
+          <div class="spacer"></div>
+          <p class="elevation__hint">▸ HOVER A FLOOR TO PREVIEW — CLICK TO OPEN ITS PLAN</p>
+        </div>
+        <div class="elevation__stage blueprint-grid">
+          <div class="floor-stack">
+            {#each property.floors as f, i}
+              <button
+                type="button"
+                class="floor-row"
+                style="height:{i === 0 ? '52px' : '38px'}; background:{hoverFloor === f.number ? 'color-mix(in oklab, var(--color-accent) 24%, var(--color-surface))' : 'transparent'}"
+                on:mouseenter={() => (hoverFloor = f.number)}
+                on:mouseleave={() => (hoverFloor = null)}
+                on:click={() => openFloor(f.number)}
               >
-                <rect
-                  x={room.svgX} y={room.svgY}
-                  width={room.svgW} height={room.svgH}
-                  fill={isSelected
-                    ? 'var(--color-accent-light)'
-                    : isHovered
-                      ? 'oklch(94% 0.03 180)'
-                      : 'transparent'}
-                  stroke={isSelected ? 'var(--color-accent)' : 'var(--color-line)'}
-                  stroke-width={isSelected ? '1.5' : '1'}
-                  style="transition: fill 150ms ease-out, stroke 150ms ease-out;"
-                />
-
-                <!-- Room name -->
-                <text
-                  x={room.svgX + room.svgW / 2}
-                  y={room.svgY + room.svgH / 2 - (room.svgH > 80 ? 10 : 4)}
-                  text-anchor="middle"
-                  class="room-name-text"
-                  fill={isSelected ? 'var(--color-accent)' : 'var(--color-text)'}
-                  style="transition: fill 150ms ease-out;"
-                >{room.name}</text>
-
-                {#if room.svgH > 80}
-                  <text
-                    x={room.svgX + room.svgW / 2}
-                    y={room.svgY + room.svgH / 2 + 10}
-                    text-anchor="middle"
-                    class="room-area-text"
-                    fill="var(--color-secondary)"
-                  >{room.area} sq ft</text>
-                {/if}
-              </g>
+                <span class="floor-row__label" style="opacity:{hoverFloor === f.number ? 1 : 0.7}">{f.label}</span>
+                <span class="floor-row__arrow" style="opacity:{hoverFloor === f.number ? 1 : 0}">PLAN →</span>
+              </button>
             {/each}
-          </svg>
+          </div>
+        </div>
+      </div>
+    {:else if currentFloor}
+      <!-- ── PLAN: zone grid + capability panel ── -->
+      <div class="plan">
+        <div class="plan__grid-wrap">
+          <div class="plan__crumb">
+            <button type="button" class="crumb-link" on:click={backToElevation}>{property.name}</button>
+            <span class="crumb-sep">▸</span>
+            <span>{currentFloor.label}</span>
+          </div>
+          <div class="zone-grid">
+            {#each currentFloor.zones as zone, i}
+              <button
+                type="button"
+                class="zone"
+                style="grid-column:{zone.gc}; grid-row:{zone.gr}; background:{selectedZone === i ? 'color-mix(in oklab, var(--color-accent) 34%, var(--color-surface))' : hoverZone === i ? 'color-mix(in oklab, var(--color-accent) 18%, var(--color-surface))' : 'var(--color-surface)'}"
+                on:mouseenter={() => (hoverZone = i)}
+                on:mouseleave={() => (hoverZone = null)}
+                on:click={() => (selectedZone = i)}
+                on:keydown={(e) => onKey(e, () => (selectedZone = i))}
+              >
+                <span class="zone__short">{zone.short}</span>
+                <span class="zone__area">{zone.area}</span>
+              </button>
+            {/each}
+          </div>
         </div>
 
-        <!-- Side panel -->
-        <aside class="side-panel">
-          {#if level === 'room' && selectedRoom}
-            <div class="room-detail" transition:fade={{ duration: 200 }}>
-              <p class="label label--accent">Room Detail</p>
-              <h3 class="room-detail__name">{selectedRoom.name}</h3>
-              <dl class="spec-list">
-                <div class="spec-item">
-                  <dt>Type</dt>
-                  <dd>{selectedRoom.type}</dd>
-                </div>
-                <div class="spec-item">
-                  <dt>Area</dt>
-                  <dd>{selectedRoom.area} sq ft</dd>
-                </div>
-                <div class="spec-item">
-                  <dt>Floor</dt>
-                  <dd>{selectedRoom.floor}</dd>
-                </div>
-                <div class="spec-item">
-                  <dt>Orientation</dt>
-                  <dd>{selectedRoom.orientation}</dd>
-                </div>
-              </dl>
+        <div class="plan__panel">
+          {#if selectedZone != null && activeZone}
+            <button type="button" class="panel-back" on:click={backToSummary}>← FLOOR SUMMARY</button>
+            <span class="ascii-frame">CAPABILITY SHEET</span>
+            <h3 class="panel-zone-name">{activeZone.name}</h3>
+            <span class="panel-area">{activeZone.area}</span>
+            <div class="panel-services">
+              <span class="panel-services__label">ELECTRICAL WORK IN THIS SPACE</span>
+              <ul>
+                {#each activeZone.services as service}
+                  <li>{service}</li>
+                {/each}
+              </ul>
             </div>
+            <p class="panel-desc">{activeZone.desc}</p>
+          {:else if hoverZone != null && activeZone}
+            <span class="ascii-frame">ZONE PREVIEW</span>
+            <h3 class="panel-zone-name">{activeZone.name}</h3>
+            <ul class="panel-preview-list">
+              {#each activeZone.services.slice(0, 2) as service}
+                <li>{service}</li>
+              {/each}
+            </ul>
+            <p class="panel-hint">CLICK TO SEE THE FULL BREAKDOWN →</p>
           {:else}
-            <div class="floor-hint" transition:fade={{ duration: 200 }}>
-              <p class="floor-hint__number">F{selectedFloor.number}</p>
-              <p class="floor-hint__label">{selectedFloor.label}</p>
-              <p class="label" style="margin-top: var(--sp-6);">
-                {selectedFloor.rooms.length} rooms · Select one to inspect
-              </p>
-            </div>
+            <span class="ascii-frame">CAPABILITY MAP</span>
+            <h3 class="panel-zone-name">{currentFloor.label}</h3>
+            <p class="panel-summary-count">{currentFloor.zones.length} ZONES MAPPED</p>
+            <p class="panel-hint">Hover a zone to preview the work we can do there. Click to pin the full breakdown.</p>
+            <div class="spacer"></div>
+            <button type="button" class="panel-back" on:click={backToElevation}>← BACK TO ELEVATION</button>
           {/if}
-        </aside>
+        </div>
       </div>
-    </div>
-  {/if}
-
+    {/if}
+  </div>
 </div>
 
 <style>
   .explorer {
-    width: 100%;
+    border: 2px solid var(--color-ink);
+    background: var(--color-surface);
   }
 
-  /* Header */
-  .explorer__header {
+  /* ── Tabs ── */
+  .tabs {
     display: flex;
-    align-items: center;
-    gap: var(--sp-4);
-    margin-bottom: var(--sp-5);
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 2px solid var(--color-ink);
   }
 
-  .demo-badge {
+  .tab {
+    font-family: inherit;
+    font-weight: 700;
     font-size: var(--text-xs);
-    font-weight: 500;
-    letter-spacing: 0.1em;
-    color: var(--color-accent);
-    border: 1px solid var(--color-accent);
-    padding: 3px 8px;
+    letter-spacing: 0.05em;
+    padding: var(--sp-4) var(--sp-6);
+    background: transparent;
+    color: var(--color-text);
+    border: none;
+    border-right: 1.5px solid var(--color-ink);
+    cursor: pointer;
+    transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
   }
 
-  .project-meta {
-    font-size: var(--text-sm);
+  .tab:last-child { border-right: none; }
+
+  .tab--active {
+    background: var(--color-ink);
+    color: var(--color-surface);
+  }
+
+  .tab:hover:not(.tab--active) {
+    background: var(--color-surface-2);
+  }
+
+  .explorer__frame { min-height: 480px; }
+
+  /* ── Elevation ── */
+  .elevation {
+    display: grid;
+    grid-template-columns: 5fr 7fr;
+    min-height: 480px;
+  }
+
+  .elevation__info {
+    padding: var(--sp-8);
+    border-right: 2px solid var(--color-ink);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-5);
+  }
+
+  .elevation__blurb {
+    font-size: var(--text-base);
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--color-text);
+    max-width: 40ch;
+  }
+
+  .elevation__hint {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
     color: var(--color-secondary);
   }
 
-  /* Breadcrumb */
-  .breadcrumb {
+  .spacer { flex: 1; }
+
+  .elevation__stage {
     display: flex;
-    align-items: center;
-    gap: var(--sp-2);
-    margin-bottom: var(--sp-8);
-    min-height: 24px;
+    align-items: flex-end;
+    justify-content: center;
+    padding: var(--sp-10) var(--sp-10) 0;
   }
 
-  .crumb {
+  .floor-stack {
+    width: min(80%, 280px);
+    border: 2px solid var(--color-ink);
+    border-bottom: none;
+    display: flex;
+    flex-direction: column-reverse;
+    background: var(--color-surface);
+  }
+
+  .floor-row {
+    font-family: inherit;
+    border: none;
+    border-top: 1.5px solid var(--color-ink);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-inline: var(--sp-3);
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+
+  .floor-row__label,
+  .floor-row__arrow {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    transition: opacity 120ms ease;
+  }
+
+  /* ── Plan ── */
+  .plan {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    min-height: 480px;
+  }
+
+  .plan__grid-wrap {
+    padding: var(--sp-6) var(--sp-8);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .plan__crumb {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sp-3);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+  }
+
+  .crumb-link {
+    font: inherit;
     background: none;
     border: none;
     padding: 0;
-    font: inherit;
-    font-size: var(--text-sm);
     color: var(--color-secondary);
-    text-decoration: underline;
-    text-underline-offset: 3px;
-    transition: color var(--dur-fast) var(--ease-out-quint);
-  }
-
-  .crumb:hover:not(:disabled) { color: var(--color-text); }
-  .crumb:disabled { cursor: default; text-decoration: none; color: var(--color-secondary); }
-  .crumb--current { text-decoration: none; color: var(--color-text); font-weight: 500; }
-
-  .crumb-sep { color: var(--color-line); font-size: var(--text-sm); }
-
-  /* Views */
-  .view {
-    width: 100%;
-  }
-
-  .building-hint {
-    margin-bottom: var(--sp-6);
-  }
-
-  /* Building layout */
-  .building-layout {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--sp-12);
-    align-items: start;
-  }
-
-  .building-svg {
-    width: 240px;
-    flex-shrink: 0;
-  }
-
-  .floor-zone {
+    border-bottom: 1px solid var(--color-secondary);
     cursor: pointer;
   }
 
-  .floor-zone:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
+  .crumb-sep { color: var(--color-secondary); }
+
+  .zone-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    gap: 1.5px;
+    background: var(--color-ink);
+    border: 2px solid var(--color-ink);
+    min-height: 380px;
+    position: relative;
   }
 
-  .floor-label {
-    font-size: 11px;
-    font-family: var(--font-sans);
+  .zone {
+    font-family: inherit;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--sp-3);
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+
+  .zone__short {
+    font-family: var(--font-mono);
+    font-size: 10px;
     font-weight: 500;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
   }
 
-  /* Building meta */
-  .building-meta {
-    padding-top: var(--sp-4);
-    border-top: 1px solid var(--color-line);
+  .zone__area {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+    align-self: flex-end;
   }
 
-  .meta-list {
+  .plan__panel {
+    border-left: 2px solid var(--color-ink);
+    padding: var(--sp-8);
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
-    list-style: none;
   }
 
-  .meta-item {
-    display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: var(--sp-2);
-    font-size: var(--text-sm);
-  }
-
-  .meta-item dt { color: var(--color-secondary); }
-  .meta-item dd { font-weight: 500; }
-
-  /* Floor layout */
-  .floor-layout {
-    display: grid;
-    grid-template-columns: 1fr 260px;
-    gap: var(--sp-8);
-    align-items: start;
-  }
-
-  .floor-plan-wrap {
-    min-width: 0;
-  }
-
-  .floor-label-text {
-    margin-bottom: var(--sp-4);
-  }
-
-  .floor-svg {
-    width: 100%;
-    height: auto;
-  }
-
-  .room-zone {
+  .panel-back {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    background: none;
+    border: none;
+    color: var(--color-secondary);
     cursor: pointer;
+    padding: 0;
   }
 
-  .room-zone:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 2px;
-  }
-
-  .room-name-text {
-    font-size: 11px;
-    font-family: var(--font-sans);
-    font-weight: 600;
-    letter-spacing: 0.01em;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  .room-area-text {
-    font-size: 9px;
-    font-family: var(--font-sans);
-    pointer-events: none;
-    user-select: none;
-  }
-
-  /* Side panel */
-  .side-panel {
-    min-height: 280px;
-  }
-
-  .room-detail {
-    padding: var(--sp-6);
-    background: var(--color-surface-2);
-    border: 1px solid var(--color-line);
-  }
-
-  .room-detail__name {
+  .panel-zone-name {
     font-size: var(--text-xl);
-    font-weight: 600;
-    margin-top: var(--sp-3);
-    margin-bottom: var(--sp-6);
-    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
   }
 
-  .spec-list {
+  .panel-area {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+  }
+
+  .panel-summary-count {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--sp-3);
+  }
+
+  .panel-services {
+    border-top: 2px solid var(--color-ink);
+    padding-top: var(--sp-4);
     display: flex;
     flex-direction: column;
-    gap: 0;
-  }
-
-  .spec-item {
-    display: grid;
-    grid-template-columns: 100px 1fr;
     gap: var(--sp-2);
-    font-size: var(--text-sm);
-    padding-block: var(--sp-3);
-    border-bottom: 1px solid var(--color-line);
   }
 
-  .spec-item:last-child { border-bottom: none; }
-  .spec-item dt { color: var(--color-secondary); }
-  .spec-item dd { font-weight: 500; }
-
-  .floor-hint {
-    padding: var(--sp-6);
-    border: 1px solid var(--color-line);
-  }
-
-  .floor-hint__number {
-    font-size: var(--text-3xl);
-    font-weight: 700;
-    color: var(--color-accent);
-    line-height: 1;
-    letter-spacing: -0.04em;
-  }
-
-  .floor-hint__label {
-    font-size: var(--text-sm);
+  .panel-services__label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
     color: var(--color-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    margin-top: var(--sp-2);
   }
 
-  /* Responsive */
+  .panel-services ul,
+  .panel-preview-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-2);
+  }
+
+  .panel-services li,
+  .panel-preview-list li {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    padding-left: var(--sp-4);
+    position: relative;
+  }
+
+  .panel-services li::before,
+  .panel-preview-list li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: var(--color-accent);
+  }
+
+  .panel-desc {
+    font-size: var(--text-sm);
+    font-weight: 300;
+    color: var(--color-secondary);
+    line-height: 1.6;
+  }
+
+  .panel-hint {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--color-secondary);
+  }
+
   @media (max-width: 900px) {
-    .building-layout {
+    .elevation, .plan {
       grid-template-columns: 1fr;
     }
-
-    .building-svg {
-      width: 180px;
-      margin: 0 auto;
+    .elevation__info, .plan__panel {
+      border-right: none;
+      border-left: none;
+      border-bottom: 2px solid var(--color-ink);
     }
+  }
 
-    .floor-layout {
-      grid-template-columns: 1fr;
-    }
-
-    .side-panel {
-      order: -1;
-    }
+  @media (prefers-reduced-motion: reduce) {
+    .floor-row, .zone, .tab { transition: none; }
   }
 </style>

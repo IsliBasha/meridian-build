@@ -1,19 +1,26 @@
 /* ─── Design Tokens ─── */
 :root {
   /* Colors — OKLCH. Never #000 or #fff. Every neutral is bronze-tinted. */
-  --color-surface:       oklch(98% 0.005 80);
-  --color-surface-2:     oklch(95% 0.006 80);
-  --color-surface-3:     oklch(91% 0.007 80);
-  --color-text:          oklch(16% 0.006 80);
-  --color-secondary:     oklch(46% 0.006 80);
-  --color-accent:        oklch(36% 0.08 180);
+  --color-surface:       oklch(97% 0.006 80);
+  --color-surface-2:     oklch(93% 0.007 80);
+  --color-surface-3:     oklch(88% 0.008 80);
+  --color-ink:           oklch(5%  0.004 80);
+  --color-text:          oklch(9%  0.006 80);
+  --color-secondary:     oklch(42% 0.006 80);
+  --color-accent:        oklch(36% 0.09 180);
+  --color-accent-mid:    oklch(50% 0.09 180);
+  --color-accent-block:  oklch(30% 0.10 180);
   --color-accent-light:  oklch(92% 0.04 180);
-  --color-line:          oklch(88% 0.005 80);
-  --color-dark:          oklch(14% 0.008 80);
+  --color-line:          oklch(88% 0.008 80);
+  --color-dark:          oklch(12% 0.008 80);
   --color-dark-surface:  oklch(18% 0.008 80);
+  --quote-bar-h:         52px;
 
   /* Typography */
   --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  /* Blueprint technique layer — monospace is scoped to the capability explorer only
+     (coordinates, measurements, ASCII-bracket labels). Never used for body copy. */
+  --font-mono: 'IBM Plex Mono', 'Space Mono', ui-monospace, 'SFMono-Regular', monospace;
 
   /* Type scale — fluid, min 1.4 ratio between steps */
   --text-xs:   clamp(0.72rem,  0.68rem + 0.2vw,  0.8rem);
@@ -134,6 +141,118 @@ h1, h2, h3, h4, h5, h6 {
 
 .label--accent {
   color: var(--color-accent);
+}
+
+/* ─── Neo-Brutalist structural utilities ─── */
+
+/* Section counter — "01 ————————" prefix used at the top of every homepage section */
+.section-counter {
+  display: block;
+  font-weight: 500;
+  font-size: var(--text-xs);
+  letter-spacing: 0.14em;
+  color: var(--color-secondary);
+  text-transform: uppercase;
+}
+
+/* Hard 2px ink rule marking a section start — the visible structure IS the design */
+.hard-rule {
+  border: none;
+  border-top: 2px solid var(--color-ink);
+}
+
+/* Full-row hover inversion for numbered lists (services, careers) */
+.row-invert {
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.row-invert:hover {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+/* Hard-bordered card with offset-shadow hover — never a blurred shadow */
+.card-hard {
+  border: 1.5px solid var(--color-ink);
+  border-radius: 0;
+  background: var(--color-surface);
+  transition: transform var(--dur-fast) var(--ease-out-quint), box-shadow var(--dur-fast) var(--ease-out-quint);
+}
+
+.card-hard:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+
+/* ─── Buttons — hard borders only, hover = fill swap, never a blurred shadow ─── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: var(--sp-4) var(--sp-7);
+  border: none;
+  border-radius: 0;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.btn--primary {
+  background: var(--color-ink);
+  color: var(--color-surface);
+}
+
+.btn--primary:hover { background: var(--color-accent); }
+
+.btn--ghost {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+}
+
+.btn--ghost:hover { background: var(--color-ink); color: var(--color-surface); }
+
+.btn--surface {
+  background: transparent;
+  color: var(--color-surface);
+  border: 2px solid var(--color-surface);
+}
+
+.btn--surface:hover { background: var(--color-surface); color: var(--color-ink); }
+
+/* ─── Blueprint technique layer (capability explorer only) ─── */
+
+/* Wraps a label in ASCII brackets: <span class="ascii-frame">ZONE A</span> → [ ZONE A ] */
+.ascii-frame {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.08em;
+}
+
+.ascii-frame::before { content: '[ '; }
+.ascii-frame::after { content: ' ]'; }
+
+/* Hairline grid background simulating graph paper / blueprint substrate */
+.blueprint-grid {
+  background-image:
+    repeating-linear-gradient(0deg, transparent 0, transparent 23px, var(--color-surface-3) 23px, var(--color-surface-3) 24px),
+    repeating-linear-gradient(90deg, transparent 0, transparent 23px, var(--color-surface-3) 23px, var(--color-surface-3) 24px);
+}
+
+/* ─── Scroll reveal ─── */
+/* Class added by use:reveal action after JS hydrates — hides element before intersection */
+.reveal-ready {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 500ms var(--ease-out-expo),
+    transform 500ms var(--ease-out-expo);
+}
+
+/* Added by the action when element enters the viewport */
+.reveal-ready.is-revealed {
+  opacity: 1;
+  transform: none;
 }
 
 /* ─── Reduced motion ─── */
