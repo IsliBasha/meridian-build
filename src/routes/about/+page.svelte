@@ -2,6 +2,7 @@
   import { company, team, clients } from '$lib/data/placeholder.js';
   import { reveal } from '$lib/actions/reveal.js';
   import NumberedRow from '$lib/components/NumberedRow.svelte';
+  import ServeList from '$lib/components/ServeList.svelte';
 </script>
 
 <svelte:head>
@@ -27,7 +28,7 @@
 <!-- The Chain -->
 <section class="section section--alt chain-section" aria-label="How a job moves through our crew" use:reveal>
   <div class="container">
-    <span class="section-counter" style="margin-bottom: var(--sp-8); display: block;">THE CHAIN</span>
+    <h2 class="section-counter" style="margin-bottom: var(--sp-8); display: block;">THE CHAIN</h2>
     <div class="chain">
       {#each team as person, i}
         <div class="chain__node">{person.name}</div>
@@ -45,7 +46,7 @@
 <!-- The People -->
 <section class="section" aria-label="The people" use:reveal>
   <div class="container">
-    <span class="section-counter" style="margin-bottom: var(--sp-8); display: block;">THE PEOPLE</span>
+    <h2 class="section-counter" style="margin-bottom: var(--sp-8); display: block;">THE PEOPLE</h2>
     <div class="row-list" role="list">
       {#each team as person, i}
         <NumberedRow number={String(i + 1).padStart(2, '0')} name={person.name} summary="{person.title} — {person.bio}" />
@@ -57,16 +58,8 @@
 <!-- Who We Serve -->
 <section class="section section--alt" aria-label="Who we serve" use:reveal>
   <div class="container">
-    <span class="section-counter" style="margin-bottom: var(--sp-8); display: block;">WHO WE SERVE</span>
-    <ul class="serve-list" role="list">
-      {#each clients as client}
-        <li class="serve-row">
-          <span class="serve-row__name">{client.name}</span>
-          <span class="serve-row__dots" aria-hidden="true"></span>
-          <span class="serve-row__sector">{client.sector}</span>
-        </li>
-      {/each}
-    </ul>
+    <h2 class="section-counter" style="margin-bottom: var(--sp-8); display: block;">WHO WE SERVE</h2>
+    <ServeList {clients} />
   </div>
 </section>
 
@@ -149,45 +142,8 @@
     max-width: 60ch;
   }
 
-  /* ── Who We Serve (matches homepage/clients pattern) ── */
-  .serve-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-4);
-    list-style: none;
-    max-width: 880px;
-  }
-
-  .serve-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-4);
-  }
-
-  .serve-row__name {
-    font-weight: 600;
-    font-size: var(--text-lg);
-    white-space: nowrap;
-  }
-
-  .serve-row__dots {
-    flex: 1;
-    border-bottom: 1.5px dotted var(--color-secondary);
-  }
-
-  .serve-row__sector {
-    font-weight: 500;
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
   @media (max-width: 768px) {
     .chain { flex-direction: column; }
     .chain__arrow { justify-content: center; transform: rotate(90deg); padding-block: var(--sp-1); }
-    .serve-row { flex-wrap: wrap; }
-    .serve-row__dots { display: none; }
   }
 </style>

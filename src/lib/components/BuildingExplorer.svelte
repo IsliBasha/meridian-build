@@ -66,6 +66,8 @@
 
 <div class="explorer" aria-label="Electrical capability explorer">
 
+  <h2 class="sr-only">Capability details</h2>
+
   <!-- Property type tabs -->
   <div class="tabs" role="tablist" aria-label="Property type">
     {#each properties as p, i}
@@ -101,6 +103,8 @@
                 style="height:{i === 0 ? '52px' : '38px'}; background:{hoverFloor === f.number ? 'color-mix(in oklab, var(--color-accent) 24%, var(--color-surface))' : 'transparent'}"
                 on:mouseenter={() => (hoverFloor = f.number)}
                 on:mouseleave={() => (hoverFloor = null)}
+                on:focus={() => (hoverFloor = f.number)}
+                on:blur={() => (hoverFloor = null)}
                 on:click={() => openFloor(f.number)}
               >
                 <span class="floor-row__label" style="opacity:{hoverFloor === f.number ? 1 : 0.7}">{f.label}</span>
@@ -127,6 +131,8 @@
                 style="grid-column:{zone.gc}; grid-row:{zone.gr}; background:{selectedZone === i ? 'color-mix(in oklab, var(--color-accent) 34%, var(--color-surface))' : hoverZone === i ? 'color-mix(in oklab, var(--color-accent) 18%, var(--color-surface))' : 'var(--color-surface)'}"
                 on:mouseenter={() => (hoverZone = i)}
                 on:mouseleave={() => (hoverZone = null)}
+                on:focus={() => (hoverZone = i)}
+                on:blur={() => (hoverZone = null)}
                 on:click={() => (selectedZone = i)}
                 on:keydown={(e) => onKey(e, () => (selectedZone = i))}
               >
@@ -138,37 +144,47 @@
         </div>
 
         <div class="plan__panel">
-          {#if selectedZone != null && activeZone}
-            <button type="button" class="panel-back" on:click={backToSummary}>← FLOOR SUMMARY</button>
-            <span class="ascii-frame">CAPABILITY SHEET</span>
-            <h3 class="panel-zone-name">{activeZone.name}</h3>
-            <span class="panel-area">{activeZone.area}</span>
-            <div class="panel-services">
-              <span class="panel-services__label">ELECTRICAL WORK IN THIS SPACE</span>
-              <ul>
-                {#each activeZone.services as service}
+          <!-- Hover/focus preview and the default summary are visual-only — they
+               change too often (every zone hover/tab-stop) to announce without
+               spamming screen-reader users. Only the pinned "click to pin"
+               state below is a deliberate action worth announcing. -->
+          {#if selectedZone == null}
+            {#if hoverZone != null && activeZone}
+              <span class="ascii-frame">ZONE PREVIEW</span>
+              <h3 class="panel-zone-name">{activeZone.name}</h3>
+              <ul class="panel-preview-list">
+                {#each activeZone.services.slice(0, 2) as service}
                   <li>{service}</li>
                 {/each}
               </ul>
-            </div>
-            <p class="panel-desc">{activeZone.desc}</p>
-          {:else if hoverZone != null && activeZone}
-            <span class="ascii-frame">ZONE PREVIEW</span>
-            <h3 class="panel-zone-name">{activeZone.name}</h3>
-            <ul class="panel-preview-list">
-              {#each activeZone.services.slice(0, 2) as service}
-                <li>{service}</li>
-              {/each}
-            </ul>
-            <p class="panel-hint">CLICK TO SEE THE FULL BREAKDOWN →</p>
-          {:else}
-            <span class="ascii-frame">CAPABILITY MAP</span>
-            <h3 class="panel-zone-name">{currentFloor.label}</h3>
-            <p class="panel-summary-count">{currentFloor.zones.length} ZONES MAPPED</p>
-            <p class="panel-hint">Hover a zone to preview the work we can do there. Click to pin the full breakdown.</p>
-            <div class="spacer"></div>
-            <button type="button" class="panel-back" on:click={backToElevation}>← BACK TO ELEVATION</button>
+              <p class="panel-hint">CLICK TO SEE THE FULL BREAKDOWN →</p>
+            {:else}
+              <span class="ascii-frame">CAPABILITY MAP</span>
+              <h3 class="panel-zone-name">{currentFloor.label}</h3>
+              <p class="panel-summary-count">{currentFloor.zones.length} ZONES MAPPED</p>
+              <p class="panel-hint">Hover a zone to preview the work we can do there. Click to pin the full breakdown.</p>
+              <div class="spacer"></div>
+              <button type="button" class="panel-back" on:click={backToElevation}>← BACK TO ELEVATION</button>
+            {/if}
           {/if}
+
+          <div class="plan__panel-live" aria-live="polite" aria-atomic="true">
+            {#if selectedZone != null && activeZone}
+              <button type="button" class="panel-back" on:click={backToSummary}>← FLOOR SUMMARY</button>
+              <span class="ascii-frame">CAPABILITY SHEET</span>
+              <h3 class="panel-zone-name">{activeZone.name}</h3>
+              <span class="panel-area">{activeZone.area}</span>
+              <div class="panel-services">
+                <span class="panel-services__label">ELECTRICAL WORK IN THIS SPACE</span>
+                <ul>
+                  {#each activeZone.services as service}
+                    <li>{service}</li>
+                  {/each}
+                </ul>
+              </div>
+              <p class="panel-desc">{activeZone.desc}</p>
+            {/if}
+          </div>
         </div>
       </div>
     {/if}
@@ -342,6 +358,8 @@
     padding: var(--sp-3);
     cursor: pointer;
     transition: background 120ms ease;
+    min-width: 44px;
+    min-height: 44px;
   }
 
   .zone__short {
@@ -365,6 +383,16 @@
     display: flex;
     flex-direction: column;
     gap: var(--sp-4);
+  }
+
+  .plan__panel-live {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-4);
+  }
+
+  .plan__panel-live:empty {
+    display: contents;
   }
 
   .panel-back {

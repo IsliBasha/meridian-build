@@ -3,6 +3,7 @@
   import { reveal } from '$lib/actions/reveal.js';
   import BuildingExplorer from '$lib/components/BuildingExplorer.svelte';
   import NumberedRow from '$lib/components/NumberedRow.svelte';
+  import ServeList from '$lib/components/ServeList.svelte';
 </script>
 
 <svelte:head>
@@ -62,15 +63,7 @@
 <section class="section section--tight who-we-serve" aria-label="Who we serve" use:reveal>
   <div class="container">
     <span class="section-counter" style="margin-bottom: var(--sp-8); display: block;">04 ———— WHO WE SERVE</span>
-    <ul class="serve-list" role="list">
-      {#each clients as client}
-        <li class="serve-row">
-          <span class="serve-row__name">{client.name}</span>
-          <span class="serve-row__dots" aria-hidden="true"></span>
-          <span class="serve-row__sector">{client.sector}</span>
-        </li>
-      {/each}
-    </ul>
+    <ServeList {clients} />
   </div>
 </section>
 
@@ -171,40 +164,6 @@
     border-bottom: 2px solid var(--color-ink);
   }
 
-  .serve-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-4);
-    list-style: none;
-    max-width: 880px;
-  }
-
-  .serve-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-4);
-  }
-
-  .serve-row__name {
-    font-weight: 600;
-    font-size: var(--text-lg);
-    white-space: nowrap;
-  }
-
-  .serve-row__dots {
-    flex: 1;
-    border-bottom: 1.5px dotted var(--color-secondary);
-  }
-
-  .serve-row__sector {
-    font-weight: 500;
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
   /* ── CTA ── */
   .cta-inner {
     display: flex;
@@ -223,11 +182,8 @@
 
   .cta-sub {
     font-size: var(--text-sm);
-    color: oklch(65% 0.006 80);
+    color: var(--color-secondary-inverse);
     margin-top: var(--sp-2);
   }
 
-  @media (max-width: 900px) {
-    .serve-row__name { white-space: normal; }
-  }
 </style>

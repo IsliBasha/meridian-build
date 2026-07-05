@@ -89,7 +89,7 @@
 
 <!-- Sticky quote bar — slides in once the current page's hero has scrolled out of view -->
 {#if showQuoteBar}
-  <div class="quote-bar" role="note">
+  <div class="quote-bar" role="region" aria-label="Quote call to action">
     <span class="quote-bar__brand">ECO VOLT ELECTRICAL</span>
     <span class="quote-bar__msg">Have a project in mind? Let's talk it through.</span>
     <a href="/contact" class="quote-bar__cta">SCHEDULE A CALL →</a>
@@ -442,7 +442,7 @@
 
   .mobile-link:hover,
   .mobile-link[aria-current='page'] {
-    color: var(--color-accent-mid);
+    color: var(--color-accent-on-dark);
   }
 
   .mobile-link__arrow {

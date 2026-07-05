@@ -1,5 +1,6 @@
 <script>
   import { clients } from '$lib/data/placeholder.js';
+  import ServeList from '$lib/components/ServeList.svelte';
 </script>
 
 <svelte:head>
@@ -20,15 +21,8 @@
 
 <section class="section section--alt" aria-label="Client categories">
   <div class="container">
-    <ul class="serve-list" role="list">
-      {#each clients as client}
-        <li class="serve-row">
-          <span class="serve-row__name">{client.name}</span>
-          <span class="serve-row__dots" aria-hidden="true"></span>
-          <span class="serve-row__sector">{client.sector}</span>
-        </li>
-      {/each}
-    </ul>
+    <h2 class="sr-only">Client categories</h2>
+    <ServeList {clients} />
   </div>
 </section>
 
@@ -55,45 +49,4 @@
     line-height: 1.6;
   }
 
-  .serve-list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sp-6);
-    list-style: none;
-    max-width: 880px;
-  }
-
-  .serve-row {
-    display: flex;
-    align-items: baseline;
-    gap: var(--sp-4);
-    padding-bottom: var(--sp-5);
-    border-bottom: 1.5px solid var(--color-ink);
-  }
-
-  .serve-row__name {
-    font-weight: 700;
-    font-size: var(--text-xl);
-    letter-spacing: -0.02em;
-    white-space: nowrap;
-  }
-
-  .serve-row__dots {
-    flex: 1;
-    border-bottom: 1.5px dotted var(--color-secondary);
-  }
-
-  .serve-row__sector {
-    font-weight: 500;
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    color: var(--color-secondary);
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 640px) {
-    .serve-row { flex-wrap: wrap; }
-    .serve-row__dots { display: none; }
-  }
 </style>

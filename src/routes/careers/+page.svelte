@@ -19,7 +19,7 @@
 
 <section class="section section--alt" aria-label="Roles on our crew" use:reveal>
   <div class="container">
-    <span class="section-counter" style="margin-bottom: var(--sp-3); display: block;">WHAT WE HIRE FOR</span>
+    <h2 class="section-counter" style="margin-bottom: var(--sp-3); display: block;">WHAT WE HIRE FOR</h2>
     <p class="roles-note">These are the roles on our crew — none are open right now.</p>
     <div class="roles-list row-list" role="list">
       {#each team as person, i}
@@ -86,7 +86,7 @@
   }
 
   .spec-counter {
-    color: oklch(60% 0.006 80);
+    color: var(--color-secondary-inverse);
   }
 
   .spec-heading {
@@ -100,7 +100,7 @@
   .spec-body {
     font-size: var(--text-base);
     font-weight: 300;
-    color: oklch(65% 0.006 80);
+    color: var(--color-secondary-inverse);
     max-width: 52ch;
     line-height: 1.6;
   }

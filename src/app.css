@@ -11,9 +11,17 @@
   --color-accent-mid:    oklch(50% 0.09 180);
   --color-accent-block:  oklch(30% 0.10 180);
   --color-accent-light:  oklch(92% 0.04 180);
+  /* Accent used as text color on dark surfaces — kept lighter than
+     --color-accent-mid (which is tuned for use as a background fill) so
+     large bold text still clears 3:1 against --color-dark. */
+  --color-accent-on-dark: oklch(60% 0.1 180);
   --color-line:          oklch(88% 0.008 80);
   --color-dark:          oklch(12% 0.008 80);
   --color-dark-surface:  oklch(18% 0.008 80);
+  /* Secondary/tertiary text color on dark surfaces — one token instead of
+     scattering oklch(45-72% ...) values per component, so a future contrast
+     fix only needs to happen in one place. */
+  --color-secondary-inverse: oklch(65% 0.006 80);
   --quote-bar-h:         52px;
 
   /* Typography */
@@ -253,6 +261,16 @@ h1, h2, h3, h4, h5, h6 {
 .reveal-ready.is-revealed {
   opacity: 1;
   transform: none;
+}
+
+/* ─── Accessibility utilities ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 /* ─── Reduced motion ─── */

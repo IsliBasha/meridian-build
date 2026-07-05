@@ -1,5 +1,6 @@
 <script>
   import { company } from '$lib/data/placeholder.js';
+  import { validateContact, INQUIRY_TYPES } from '$lib/validation/contact.js';
 
   let name = '';
   let companyName = '';
@@ -7,6 +8,7 @@
   let phone = '';
   let inquiryType = '';
   let message = '';
+  let website = ''; // honeypot — real users never see or fill this field
   let submitted = false;
   let submitting = false;
   let formError = '';
@@ -15,26 +17,14 @@
   let emailTouched = false;
   let messageTouched = false;
 
-  const inquiryTypes = [
-    'Residential Electrical',
-    'Commercial Installations',
-    'Energy Efficiency Upgrades',
-    'Code Compliance & Permitting',
-    'Other'
-  ];
+  const inquiryTypes = INQUIRY_TYPES;
 
-  const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-  // Errors recompute reactively — only truthy after field is touched
-  $: nameError    = nameTouched    && name.trim().length < 2      ? 'Please enter your full name.'                             : '';
-  $: emailError   = emailTouched   && !EMAIL_RE.test(email.trim()) ? 'Please enter a valid email address.'                   : '';
-  $: messageError = messageTouched && message.trim().length < 10   ? 'Please describe your project (at least 10 characters).' : '';
-
-  function isFormValid() {
-    return name.trim().length >= 2
-      && EMAIL_RE.test(email.trim())
-      && message.trim().length >= 10;
-  }
+  // Single shared validator (src/lib/validation/contact.js) also used server-side,
+  // so client and server rules can't silently drift apart.
+  $: errors = validateContact({ name, email, message, phone, company: companyName, inquiryType });
+  $: nameError    = nameTouched    ? errors.name    ?? '' : '';
+  $: emailError   = emailTouched   ? errors.email   ?? '' : '';
+  $: messageError = messageTouched ? errors.message ?? '' : '';
 
   /** @param {SubmitEvent} e */
   async function handleSubmit(e) {
@@ -43,7 +33,7 @@
     nameTouched = true;
     emailTouched = true;
     messageTouched = true;
-    if (!isFormValid()) return;
+    if (Object.keys(errors).length) return;
 
     submitting = true;
     formError = '';
@@ -52,7 +42,7 @@
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, company: companyName, email, phone, inquiryType, message })
+        body: JSON.stringify({ name, company: companyName, email, phone, inquiryType, message, website })
       });
       const data = await res.json();
       if (data.ok) {
@@ -206,6 +196,13 @@
             {#if messageTouched && messageError}
               <p class="field-error" id="message-error" role="alert">{messageError}</p>
             {/if}
+          </div>
+
+          <!-- Honeypot: hidden from sighted users and screen readers alike, but present
+               in the DOM for bots that fill every field. Left empty by real users. -->
+          <div class="honeypot" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" type="text" tabindex="-1" autocomplete="off" bind:value={website} />
           </div>
 
           {#if formError}
@@ -364,7 +361,18 @@
   .form-field input:focus,
   .form-field select:focus,
   .form-field textarea:focus {
+    outline: 2px solid var(--color-ink);
+    outline-offset: 2px;
     box-shadow: 3px 3px 0 var(--color-accent);
+  }
+
+  .honeypot {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
   }
 
   /* Validation error state */
@@ -422,7 +430,7 @@
   }
 
   .form-success__counter {
-    color: oklch(60% 0.006 80);
+    color: var(--color-secondary-inverse);
     display: block;
     margin-bottom: var(--sp-4);
   }
@@ -435,7 +443,7 @@
 
   .success-body {
     font-size: var(--text-base);
-    color: oklch(70% 0.006 80);
+    color: var(--color-secondary-inverse);
   }
 
   @media (max-width: 900px) {

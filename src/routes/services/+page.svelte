@@ -118,7 +118,7 @@
   }
 
   :global(.section--dark) .service-block__summary {
-    color: oklch(65% 0.006 80);
+    color: var(--color-secondary-inverse);
   }
 
   .service-block__points {
@@ -176,7 +176,7 @@
 
   .cta-sub {
     font-size: var(--text-sm);
-    color: oklch(65% 0.006 80);
+    color: var(--color-secondary-inverse);
     margin-top: var(--sp-2);
   }
 

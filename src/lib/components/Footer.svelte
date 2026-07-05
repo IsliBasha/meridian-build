@@ -60,14 +60,14 @@
 
   .footer__city {
     font-size: var(--text-sm);
-    color: oklch(55% 0.006 80);
+    color: var(--color-secondary-inverse);
     line-height: 1.6;
     margin-top: var(--sp-2);
   }
 
   .footer__disclaimer {
     font-size: var(--text-xs);
-    color: oklch(45% 0.006 80);
+    color: var(--color-secondary-inverse);
     line-height: 1.6;
     margin-top: var(--sp-4);
     max-width: 40ch;
@@ -82,7 +82,7 @@
 
   .footer__nav a {
     font-size: var(--text-sm);
-    color: oklch(55% 0.006 80);
+    color: var(--color-secondary-inverse);
     transition: color var(--dur-fast) var(--ease-out-quint);
   }
 
@@ -96,7 +96,7 @@
 
   .footer__contact a {
     font-size: var(--text-sm);
-    color: oklch(55% 0.006 80);
+    color: var(--color-secondary-inverse);
     transition: color var(--dur-fast) var(--ease-out-quint);
   }
 
@@ -110,7 +110,7 @@
     display: flex;
     justify-content: space-between;
     font-size: var(--text-xs);
-    color: oklch(40% 0.005 80);
+    color: var(--color-secondary-inverse);
   }
 
   @media (max-width: 768px) {
