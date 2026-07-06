@@ -1,10 +1,11 @@
 /**
  * Content for Eco Volt Electrical — remade from ecovoltelectric.com.
  * `company`, `clients`, and copy voice are grounded in the real site's published content
- * (About/Contact pages, fetched directly). Eco Volt does not hold its own electrical
- * license — it operates in partnership with Licensed Master Electricians for permits,
- * DOB filings, and final inspections. No years-in-business, license number, or client
- * list is published on the real site, so none are fabricated here.
+ * (About/Contact/Clients pages, crawled directly with a headless browser since the real
+ * site renders its client and project galleries client-side). Eco Volt does not hold its
+ * own electrical license — it operates in partnership with Licensed Master Electricians
+ * for permits, DOB filings, and final inspections. No years-in-business or license number
+ * is published on the real site, so none are fabricated here.
  *
  * `capabilityMap` zone grid coordinates are grid-column/grid-row spans on a
  * 6-column x 4-row CSS Grid (matches BuildingExplorer.svelte's plan view).
@@ -44,12 +45,14 @@ export const team = [
   }
 ];
 
-/** Who Eco Volt serves — sector categories, not named clients (none are published). */
+/** Real named clients published on ecovoltelectric.com/clients (crawled 2026-07-06). */
 export const clients = [
-  { name: 'Homeowners', sector: 'Residential Properties' },
-  { name: 'Property Managers', sector: 'Multi-Unit & Rental Buildings' },
-  { name: 'Small Business Owners', sector: 'Retail & Commercial Space' },
-  { name: 'General Contractors', sector: 'Trade Partnerships' }
+  { name: "DICK'S Sporting Goods", sector: 'Retail — Lighting & Power' },
+  { name: "L'Occitane En Provence", sector: 'Retail — Boutique Lighting' },
+  { name: "Penhaligon's", sector: 'Retail — Boutique' },
+  { name: 'Fogo de Chão', sector: 'Hospitality — Ambient Lighting' },
+  { name: 'Roma Pizza', sector: 'Hospitality — Kitchen & Dining' },
+  { name: 'Blanc Reiss', sector: 'Retail — Luxury Watches' }
 ];
 
 export const services = [
